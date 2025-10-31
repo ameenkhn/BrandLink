@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BrandLink | AI-Powered Influencer Marketing Platform</title>
+<meta name="description" content="BrandLink is an AI-powered influencer marketing platform for Indian brands and creators. Discover verified influencers, run campaigns, track real-time analytics, and scale with confidence.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="dns-prefetch" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  --primary: #6366f1;
+  --primary-light: #8b8dfc;
+  --primary-dark: #4f46e5;
+  --secondary: #ec4899;
+  --accent: #14b8a6;
+  --neon: #22d3ee;
+  --dark: #0b0f1a;
+  --dark-2: #0f172a;
+  --dark-3: #111827;
+  --text: #cbd5e1;
+  --text-dim: #94a3b8;
+  --card: rgba(17, 24, 39, 0.6);
+  --glass: rgba(17, 24, 39, 0.35);
+  --border: rgba(99, 102, 241, 0.25);
+  --shadow: 0 20px 60px rgba(0,0,0,0.35);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: radial-gradient(1200px 600px at 10% -10%, rgba(99,102,241,0.25), transparent),
+              radial-gradient(1000px 600px at 110% 10%, rgba(236,72,153,0.18), transparent),
+              linear-gradient(180deg, #070b14 0%, #0c1322 40%, #0a0f1c 100%);
+  color: var(--text);
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+
+/* Animated gradient orbs */
+.bg-orbs {
+  position: fixed; inset: 0; pointer-events: none; z-index: -1; opacity: 0.45;
+}
+.orb {
+  position: absolute; width: 650px; height: 650px; filter: blur(120px); border-radius: 50%;
+  animation: drift 22s ease-in-out infinite alternate;
+}
+.orb.p { background: radial-gradient(circle at 30% 30%, var(--primary), transparent 60%); top: -200px; left: -250px; }
+.orb.s { background: radial-gradient(circle at 60% 60%, var(--secondary), transparent 60%); bottom: -250px; right: -300px; animation-delay: 8s; }
+.orb.a { background: radial-gradient(circle at 50% 50%, var(--accent), transparent 60%); top: 40%; left: 50%; transform: translate(-50%,-50%); animation-delay: 4s; opacity: 0.35; }
+@keyframes drift {
+  to { transform: translate3d(60px, -40px, 0) scale(1.05); }
+}
+
+/* Subtle scanline + grain */
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: -1;
+  background:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 100% 24px, 24px 100%;
+  mix-blend-mode: overlay; opacity: 0.25;
+}
+
+/* Neon grid */
+.grid {
+  position: fixed; inset: auto 0 0 0; height: 55vh; z-index: -1; opacity: 0.22;
+  background-image:
+    linear-gradient(rgba(34,211,238,0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34,211,238,0.12) 1px, transparent 1px);
+  background-size: 50px 50px; background-position: center bottom;
+  mask-image: linear-gradient(to top, rgba(0,0,0,0.8) 25%, transparent 90%);
+  transform: perspective(800px) rotateX(60deg) translateY(100px);
+}
+
+/* Frosted glass cards border */
+.glow-border {
+  position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: linear-gradient(135deg, rgba(99,102,241,0.35), rgba(236,72,153,0.25), rgba(20,184,166,0.25));
+  opacity: 0.35; filter: blur(14px);
+}
+
+/* Navbar */
+nav {
+  position: fixed; top: 0; left: 0; width: 100%;
+  background: linear-gradient(to bottom, rgba(10,12,24,0.85), rgba(10,12,24,0.45));
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--border);
+  z-index: 1000; transition: all 0.3s ease; padding: 14px 5%;
+}
+nav.scrolled { padding: 10px 5%; background: rgba(10,12,24,0.92); }
+
+.nav-wrap { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+
+.logo { display: flex; align-items: center; gap: 12px; color: #fff; text-decoration: none; font-weight: 900; letter-spacing: 0.3px; }
+.logo-mark {
+  width: 42px; height: 42px; border-radius: 12px;
+  background: conic-gradient(from 140deg, var(--primary), var(--secondary), var(--accent), var(--primary));
+  display: grid; place-items: center; color: #0b0f1a; font-size: 1.2rem; box-shadow: 0 10px 30px rgba(99,102,241,0.45);
+}
+.logo span { font-size: 1.35rem; }
+.logo .dot { color: var(--secondary); }
+
+.nav-menu { list-style: none; display: flex; gap: 28px; align-items: center; }
+.nav-menu a {
+  color: var(--text); text-decoration: none; font-weight: 500; position: relative; padding: 8px 2px; transition: color 0.25s;
+}
+.nav-menu a:hover { color: #fff; }
+.nav-menu a::after {
+  content: ''; position: absolute; left: 0; bottom: -6px; height: 2px; width: 0%;
+  background: linear-gradient(90deg, var(--primary), var(--secondary)); transition: width 0.25s;
+}
+.nav-menu a:hover::after, .nav-menu a.active::after { width: 100%; }
+
+.cta-btn {
+  padding: 10px 22px; border-radius: 999px; border: 1px solid var(--border); color: #fff; background: linear-gradient(135deg, rgba(99, 102, 241, 0.18), rgba(236, 72, 153, 0.18));
+  box-shadow: 0 6px 24px rgba(99,102,241,0.35); cursor: pointer; transition: transform 0.2s, box-shadow 0.25s, background 0.25s;
+}
+.cta-btn:hover { transform: translateY(-2px); background: linear-gradient(135deg, rgba(99,102,241,0.28), rgba(236,72,153,0.28)); box-shadow: 0 10px 30px rgba(99,102,241,0.55); }
+
+.menu-toggle { display: none; font-size: 1.6rem; color: #fff; cursor: pointer; }
+
+/* Hero */
+.hero {
+  min-height: 100vh; display: grid; place-items: center; padding: 120px 5% 70px; position: relative; overflow: hidden;
+}
+.hero-inner {
+  max-width: 1400px; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 60px; align-items: center;
+}
+.badge {
+  display: inline-flex; align-items: center; gap: 10px; padding: 8px 14px; font-weight: 600; letter-spacing: 0.2px;
+  color: var(--primary-light); border: 1px solid var(--border); border-radius: 999px; background: rgba(99,102,241,0.08);
+}
+.badge i { color: var(--neon); }
+
+.hero h1 {
+  margin: 18px 0 12px; font-weight: 900; line-height: 1.08;
+  font-size: clamp(2.2rem, 4vw + 1rem, 4.2rem);
+  background: linear-gradient(135deg, #ffffff 0%, #dbeafe 25%, var(--primary-light) 60%, #ffffff 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  letter-spacing: 0.2px;
+}
+.hero h1 .focus {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+.hero p { color: var(--text); font-size: 1.12rem; margin-bottom: 18px; }
+
+.hero-list { margin: 12px 0 22px; display: grid; gap: 8px; }
+.hero-list li { list-style: none; color: var(--text-dim); display: flex; gap: 10px; align-items: center; }
+.hero-list i { color: var(--accent); }
+
+.hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 6px; }
+.btn {
+  padding: 14px 26px; border-radius: 999px; border: 1px solid var(--border); font-weight: 700; letter-spacing: 0.2px; cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.25s ease, background 0.25s ease, color 0.25s ease;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; box-shadow: 0 12px 30px rgba(99,102,241,0.45);
+}
+.btn-primary:hover { transform: translateY(-3px); box-shadow: 0 16px 36px rgba(99,102,241,0.6); }
+.btn-ghost {
+  background: transparent; color: #fff; border: 1px solid var(--border);
+}
+.btn-ghost:hover { background: rgba(99,102,241,0.18); }
+
+.stats {
+  display: grid; grid-template-columns: repeat(3, minmax(120px, 1fr)); gap: 22px; margin-top: 28px;
+}
+.stat {
+  padding: 16px 12px; background: var(--glass); border: 1px solid var(--border); border-radius: 16px; backdrop-filter: blur(10px);
+  text-align: center; box-shadow: 0 10px 28px rgba(0,0,0,0.25);
+}
+.stat .num { font-size: 2rem; font-weight: 900; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.stat .lbl { font-size: 0.9rem; color: var(--text-dim); }
+
+.hero-visual { position: relative; }
+.scrn {
+  width: 100%; border-radius: 22px; overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow);
+  transform: perspective(1000px) rotateY(-6deg) rotateX(1deg); transform-origin: center right;
+}
+.scrn img { width: 100%; display: block; }
+
+.floating {
+  position: absolute; padding: 16px; border-radius: 14px; background: rgba(17,24,39,0.75); border: 1px solid var(--border);
+  box-shadow: 0 14px 30px rgba(0,0,0,0.35); backdrop-filter: blur(10px); animation: bob 3.2s ease-in-out infinite;
+}
+.floating i { color: #fff; background: linear-gradient(135deg, var(--primary), var(--secondary)); width: 38px; height: 38px; display: grid; place-items: center; border-radius: 10px; margin-bottom: 8px; }
+.floating h4 { font-size: 0.95rem; color: #fff; margin-bottom: 4px; }
+.floating p { font-size: 0.82rem; color: var(--text-dim); }
+.f1 { top: 12%; right: -28px; }
+.f2 { bottom: 16%; left: -28px; animation-delay: 1.2s; }
+@keyframes bob { 50% { transform: translateY(-10px); } }
+
+section { padding: 100px 5%; position: relative; }
+.container { max-width: 1400px; margin: 0 auto; }
+
+/* Section header */
+.sec-head { text-align: center; margin-bottom: 70px; }
+.sec-badge {
+  display: inline-block; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--border);
+  background: rgba(99,102,241,0.08); color: var(--primary-light); font-weight: 700; font-size: 0.9rem; margin-bottom: 14px;
+}
+.sec-title { font-size: clamp(1.6rem, 1.8rem + 1.5vw, 2.8rem); color: #fff; font-weight: 900; margin-bottom: 10px; }
+.sec-desc { color: var(--text); max-width: 760px; margin: 0 auto; }
+
+/* Features */
+.features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 26px; }
+.card {
+  position: relative; border-radius: 18px; padding: 28px; background: var(--card); border: 1px solid rgba(148,163,184,0.12);
+  transition: transform 0.25s ease, box-shadow 0.3s ease, border-color 0.25s ease; overflow: hidden;
+}
+.card:hover { transform: translateY(-6px); border-color: var(--primary); box-shadow: 0 22px 60px rgba(99,102,241,0.22); }
+.card .icon {
+  width: 64px; height: 64px; border-radius: 14px; display: grid; place-items: center; font-size: 1.6rem; color: #fff;
+  background: linear-gradient(135deg, var(--primary), var(--secondary)); margin-bottom: 18px;
+}
+.card h3 { color: #fff; font-size: 1.2rem; margin-bottom: 10px; }
+.card p { color: var(--text); }
+
+/* Process */
+.process { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 28px; margin-top: 40px; }
+.step { text-align: center; }
+.step .bubble {
+  width: 100px; height: 100px; border-radius: 999px; display: grid; place-items: center; margin: 0 auto 14px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; font-weight: 900; font-size: 2rem;
+  box-shadow: 0 14px 38px rgba(99,102,241,0.28);
+}
+.step h4 { color: #fff; margin-bottom: 8px; }
+.step p { color: var(--text-dim); }
+
+/* Platform split */
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; margin-top: 50px; }
+.panel {
+  padding: 24px; border-radius: 18px; background: var(--glass); border: 1px solid var(--border); backdrop-filter: blur(10px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+}
+.row { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 18px; }
+.row .mini { width: 50px; height: 50px; border-radius: 12px; display: grid; place-items: center; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; }
+.row h5 { color: #fff; font-size: 1.05rem; margin-bottom: 6px; }
+.row p { color: var(--text-dim); }
+
+/* Success */
+.success { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 26px; }
+.success .s-card {
+  background: var(--card); padding: 26px; border-radius: 18px; border: 1px solid rgba(148,163,184,0.12); transition: transform 0.2s;
+}
+.s-card:hover { transform: translateY(-6px); border-color: var(--primary); box-shadow: 0 22px 60px rgba(99,102,241,0.22); }
+.s-logo { width: 56px; height: 56px; border-radius: 14px; display: grid; place-items: center; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; font-size: 1.4rem; margin-bottom: 14px; }
+.s-card h3 { color: #fff; margin-bottom: 8px; }
+.metrics { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; margin-top: 18px; }
+.metric { text-align: center; background: rgba(99,102,241,0.1); border-radius: 12px; padding: 12px; }
+.metric .val { font-weight: 900; font-size: 1.4rem; color: var(--primary-light); }
+.metric .cap { font-size: 0.78rem; color: var(--text-dim); }
+
+/* Pricing */
+.pricing { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 26px; margin-top: 40px; }
+.price-card {
+  position: relative; background: var(--card); padding: 28px; border-radius: 18px; border: 1px solid rgba(148,163,184,0.12);
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.price-card:hover { transform: translateY(-6px); border-color: var(--primary); box-shadow: 0 22px 60px rgba(99,102,241,0.22); }
+.price-card.featured { border: 2px solid var(--primary); transform: scale(1.03); }
+.tag { position: absolute; top: 16px; right: 16px; font-size: 0.78rem; font-weight: 800; color: #fff; padding: 6px 12px; border-radius: 999px; background: linear-gradient(135deg, var(--primary), var(--secondary)); }
+.price { font-size: 2.4rem; color: #fff; font-weight: 900; margin: 6px 0; }
+.price span { font-size: 1rem; color: var(--text-dim); }
+.p-desc { color: var(--text); border-bottom: 1px solid rgba(148,163,184,0.12); padding-bottom: 16px; margin-bottom: 12px; }
+.p-list { list-style: none; display: grid; gap: 10px; margin: 12px 0 18px; }
+.p-list li { display: flex; gap: 10px; align-items: center; color: var(--text); }
+.p-list i { color: var(--accent); }
+
+/* Testimonials */
+.t-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 26px; }
+.t-card {
+  background: var(--card); padding: 26px; border-radius: 18px; border: 1px solid rgba(148,163,184,0.12);
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.t-card:hover { transform: translateY(-6px); border-color: var(--primary); box-shadow: 0 22px 60px rgba(99,102,241,0.22); }
+.t-head { display: flex; gap: 14px; align-items: center; margin-bottom: 12px; }
+.t-head img { width: 56px; height: 56px; border-radius: 999px; border: 2px solid var(--primary); object-fit: cover; }
+.t-info h4 { color: #fff; margin-bottom: 4px; }
+.t-info p { color: var(--text-dim); font-size: 0.9rem; }
+.t-stars { color: #facc15; margin: 6px 0 10px; }
+.t-body { color: var(--text); font-style: italic; }
+
+/* Logos row */
+.marquee {
+  margin-top: 28px; display: grid; grid-auto-flow: column; gap: 28px; overflow: hidden; mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+}
+.logo-pill {
+  padding: 12px 16px; border-radius: 999px; background: rgba(148,163,184,0.08); border: 1px solid rgba(148,163,184,0.15); color: #e5e7eb; white-space: nowrap;
+}
+
+/* FAQ */
+.faq { max-width: 900px; margin: 40px auto 0; display: grid; gap: 14px; }
+.qa {
+  background: var(--card); border: 1px solid rgba(148,163,184,0.15); border-radius: 14px; padding: 16px 18px; cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.qa:hover { border-color: var(--primary); box-shadow: 0 16px 38px rgba(99,102,241,0.18); }
+.q { display: flex; align-items: center; justify-content: space-between; color: #fff; font-weight: 700; }
+.q .chev {
+  width: 30px; height: 30px; border-radius: 999px; display: grid; place-items: center; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff;
+  transition: transform 0.25s;
+}
+.qa.open .chev { transform: rotate(180deg); }
+.a { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; color: var(--text); }
+.qa.open .a { max-height: 420px; margin-top: 10px; border-top: 1px solid rgba(148,163,184,0.12); padding-top: 10px; }
+
+/* CTA band */
+.band {
+  margin: 90px 5%; border-radius: 26px; overflow: hidden; position: relative; padding: 70px 5%;
+  background: linear-gradient(135deg, rgba(99,102,241,0.9), rgba(236,72,153,0.9));
+  box-shadow: 0 24px 70px rgba(99,102,241,0.35);
+  text-align: center;
+}
+.band::before {
+  content: ''; position: absolute; right: -35%; top: -70%; width: 90%; height: 190%; border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+}
+.band h2 { color: #fff; font-weight: 900; font-size: clamp(1.5rem, 1.4rem + 2vw, 2.8rem); margin-bottom: 10px; }
+.band p { color: rgba(255,255,255,0.92); margin-bottom: 18px; }
+.band .actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+/* Footer */
+footer { background: #0a0f1c; padding: 80px 5% 30px; border-top: 1px solid rgba(148,163,184,0.12); }
+.f-wrap { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 50px; margin-bottom: 50px; }
+.f-about h3 { color: #fff; font-size: 1.4rem; margin-bottom: 8px; }
+.f-about p { color: var(--text); margin: 10px 0 18px; }
+.social { display: flex; gap: 12px; }
+.soc {
+  width: 42px; height: 42px; border-radius: 999px; display: grid; place-items: center; color: #fff; text-decoration: none;
+  background: rgba(99,102,241,0.12); border: 1px solid var(--border); transition: transform 0.2s, background 0.2s;
+}
+.soc:hover { transform: translateY(-3px); background: linear-gradient(135deg, var(--primary), var(--secondary)); }
+
+.f-col h4 { color: #fff; margin-bottom: 12px; }
+.f-col ul { list-style: none; display: grid; gap: 10px; }
+.f-col a { color: var(--text); text-decoration: none; }
+.f-col a:hover { color: #fff; }
+
+.f-bottom {
+  max-width: 1400px; margin: 0 auto; padding-top: 18px; border-top: 1px solid rgba(148,163,184,0.12); display: flex; justify-content: space-between; color: var(--text-dim);
+  flex-wrap: wrap; gap: 10px;
+}
+.f-bottom a { color: var(--text-dim); text-decoration: none; }
+.f-bottom a:hover { color: #fff; }
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .hero-inner, .split { grid-template-columns: 1fr; gap: 40px; }
+  .f-wrap { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px) {
+  .nav-menu {
+    position: fixed; top: 70px; left: -100%; width: 100%; height: calc(100vh - 70px);
+    background: rgba(10,12,24,0.98); backdrop-filter: blur(18px);
+    display: flex; flex-direction: column; padding: 28px; gap: 20px; transition: left 0.25s;
+  }
+  .nav-menu.open { left: 0; }
+  .menu-toggle { display: block; }
+  .stats { grid-template-columns: 1fr; }
+  .f-wrap { grid-template-columns: 1fr; gap: 34px; }
+  .band { margin: 70px 3%; }
+  .f1, .f2 { display: none; }
+}
+
+/* Reveal on scroll */
+.reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.show { opacity: 1; transform: translateY(0); }
+
+/* Accent underline for headings in content */
+.hl { color: #fff; position: relative; }
+.hl::after { content: ''; position: absolute; left: 0; bottom: -6px; height: 3px; width: 46px; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 999px; }
+
+/* Tiny helper badges */
+.kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; border: 1px solid rgba(148,163,184,0.25); padding: 2px 6px; border-radius: 6px; color: #e2e8f0; background: rgba(148,163,184,0.08); font-size: 0.82rem; }
+</style>
+</head>
+<body>
+
+<div class="bg-orbs">
+  <div class="orb p"></div>
+  <div class="orb s"></div>
+  <div class="orb a"></div>
+</div>
+<div class="grid"></div>
+
+<nav id="nav">
+  <div class="nav-wrap">
+    <a href="#" class="logo">
+      <div class="logo-mark"><i class="fa-solid fa-link"></i></div>
+      <span>BrandLink<span class="dot">.</span></span>
+    </a>
+    <ul class="nav-menu" id="menu">
+      <li><a href="#home" class="active">Home</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how">Process</a></li>
+      <li><a href="#platform">Platform</a></li>
+      <li><a href="#success">Success</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#testimonials">Stories</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <button class="cta-btn" onclick="scrollToId('cta')">Get Started</button>
+    <div class="menu-toggle" id="burger"><i class="fa-solid fa-bars"></i></div>
+  </div>
+</nav>
+
+<header class="hero" id="home">
+  <div class="hero-inner">
+    <div>
+      <div class="badge"><i class="fa-solid fa-rocket"></i> AI-Powered Influencer Marketing</div>
+      <h1>Connect with <span class="focus">verified Indian creators</span> who actually convert</h1>
+      <p>BrandLink matches your brand with the right creators using multi-signal AI, then tracks real-time performance so you can scale what works with total confidence.</p>
+      <ul class="hero-list">
+        <li><i class="fa-solid fa-circle-check"></i> 50,000+ verified influencer profiles across niches and languages</li>
+        <li><i class="fa-solid fa-circle-check"></i> Fraud detection, audience authenticity, and ROI forecasting baked in</li>
+        <li><i class="fa-solid fa-circle-check"></i> Contracts, approvals, and escrow payments—all in one place</li>
+      </ul>
+      <div class="hero-actions">
+        <button class="btn btn-primary" onclick="scrollToId('cta')">Start Free Trial <i class="fa-solid fa-arrow-right"></i></button>
+        <button class="btn btn-ghost" onclick="scrollToId('platform')"><i class="fa-solid fa-circle-play"></i> Watch Demo</button>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="num" data-count="50000">0</div><div class="lbl">Verified Influencers</div></div>
+        <div class="stat"><div class="num" data-count="2500">0</div><div class="lbl">Active Brands</div></div>
+        <div class="stat"><div class="num" data-count="500">0</div><div class="lbl">INR Cr+ Campaign Value</div></div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="scrn">
+        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1280&auto=format&fit=crop&q=60" alt="BrandLink Dashboard">
+      </div>
+      <div class="floating f1">
+        <i class="fa-solid fa-chart-line"></i>
+        <h4>Real-time Analytics</h4>
+        <p>Live CTR, CPA, ROAS, and sentiment</p>
+      </div>
+      <div class="floating f2">
+        <i class="fa-solid fa-shield"></i>
+        <h4>98% Trust Score</h4>
+        <p>AI + manual verification</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="features">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-badge">FEATURES</div>
+      <h2 class="sec-title">Everything to win campaigns</h2>
+      <p class="sec-desc">Plan, discover, collaborate, and measure with powerful tools designed for India’s creator economy—from micro to mega influencers.</p>
+    </div>
+
+    <div class="features">
+      <div class="card reveal">
+        <div class="icon"><i class="fa-solid fa-brain"></i></div>
+        <h3>AI Matching Engine</h3>
+        <p>50+ signals including audience demographics, geo mix, brand affinity, growth velocity, authenticity score, and price-normalized ER to recommend the best creators.</p>
+      </div>
+      <div class="card reveal">
+        <div class="icon"><i class="fa-solid fa-chart-simple"></i></div>
+        <h3>Advanced Analytics</h3>
+        <p>Unified dashboard for reach, impressions, ER, CTR, CPA, CAC, LTV lift, ROAS, and cohort tracking with export to CSV, Sheets, and scheduled PDF reports.</p>
+      </div>
+      <div class="card reveal">
+        <div class="icon"><i class="fa-solid fa-shield-heart"></i></div>
+        <h3>Verification & Safety</h3>
+        <p>API validation + anomaly detection to flag fake followers, comment pods, bot spikes, and mismatched audience geography or language patterns.</p>
+      </div>
+      <div class="card reveal">
+        <div class="icon"><i class="fa-solid fa-comments"></i></div>
+        <h3>Collaboration Hub</h3>
+        <p>Briefs, chat, content approvals, asset library, compliance checklists (ASA/ASCI), and audit trails to keep teams and creators aligned.</p>
+      </div>
+      <div class="card reveal">
+        <div class="icon"><i class="fa-solid fa-wallet"></i></div>
+        <h3>Escrow Payments</h3>
+        <p>UPI, cards, net banking, and international payments with milestone-based release, invoice GST support, and dispute resolution workflows.</p>
+      </div>
+      <div class="card reveal">
+        <div class="icon"><i class="fa-solid fa-mobile-screen"></i></div>
+        <h3>Omni-platform</h3>
+        <p>Instagram, YouTube, X, LinkedIn, Snapchat, and more—track per-channel performance and multi-touch attribution across funnels.</p>
+      </div>
+      <div class="card reveal">
+        <div class="icon"><i class="fa-solid fa-users-viewfinder"></i></div>
+        <h3>Audience Insights</h3>
+        <p>Age, gender, top cities, language, interests, affinity brands, scroll-depth proxies, and historical campaign performance.</p>
+      </div>
+      <div class="card reveal">
+        <div class="icon"><i class="fa-solid fa-robot"></i></div>
+        <h3>Creative Intelligence</h3>
+        <p>Predictive modeling for hook rate, ideal duration, posting hours, CTA wording, and thumbnail/text overlay A/B recommendations.</p>
+      </div>
+      <div class="card reveal">
+        <div class="icon"><i class="fa-solid fa-headset"></i></div>
+        <h3>Priority Support</h3>
+        <p>24/7 chat with <span class="kbd">SLA</span>-backed response times, plus onboarding, playbooks, and quarterly growth reviews for Pro+ plans.</p>
+      </div>
+    </div>
+
+    <div class="marquee" aria-hidden="true">
+      <div class="logo-pill"><i class="fa-solid fa-bolt"></i> 200M+ Monthly Impressions Tracked</div>
+      <div class="logo-pill"><i class="fa-solid fa-user-check"></i> 50K+ Verified Creators</div>
+      <div class="logo-pill"><i class="fa-solid fa-building"></i> 2,500+ Active Brands</div>
+      <div class="logo-pill"><i class="fa-solid fa-shield"></i> FraudGuard v2.1</div>
+      <div class="logo-pill"><i class="fa-solid fa-arrows-rotate"></i> Real-time Refresh 15m</div>
+    </div>
+  </div>
+</section>
+
+<section id="how" style="background: rgba(17,24,39,0.35);">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-badge">PROCESS</div>
+      <h2 class="sec-title">Launch in 4 steps</h2>
+      <p class="sec-desc">From brief to ROI—get to results faster with a guided, transparent workflow.</p>
+    </div>
+    <div class="process">
+      <div class="step reveal">
+        <div class="bubble">1</div>
+        <h4>Define your brief</h4>
+        <p>Goals, target persona, budget, platforms, and creative guardrails with AI-assisted templates and benchmarks by industry.</p>
+      </div>
+      <div class="step reveal">
+        <div class="bubble">2</div>
+        <h4>Discover & shortlist</h4>
+        <p>Smart filters by niche, language, city, ER, price band, and authenticity; auto-build shortlists and outreach sequences.</p>
+      </div>
+      <div class="step reveal">
+        <div class="bubble">3</div>
+        <h4>Collaborate & create</h4>
+        <p>Negotiate, e-sign, approve scripts and drafts, version control assets, and schedule posts with reminders.</p>
+      </div>
+      <div class="step reveal">
+        <div class="bubble">4</div>
+        <h4>Measure & scale</h4>
+        <p>Live dashboards, pixel and link tracking, conversion exports, and AI suggestions to scale top performers.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="platform">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-badge">PLATFORM</div>
+      <h2 class="sec-title">Intuitive. Powerful. Scalable.</h2>
+      <p class="sec-desc">Built for brand teams, agencies, and fast-growing startups running multi-creator operations.</p>
+    </div>
+
+    <div class="split">
+      <img class="panel reveal" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1280&auto=format&fit=crop&q=60" alt="Platform UI">
+      <div class="panel reveal">
+        <div class="row">
+          <div class="mini"><i class="fa-solid fa-magnifying-glass"></i></div>
+          <div>
+            <h5>Smart Search & Filters</h5>
+            <p>Search by niche, city, follower band, ER, language, rate card, posting frequency, branded-content ratio, and audience geo split.</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="mini"><i class="fa-solid fa-calendar-check"></i></div>
+          <div>
+            <h5>Campaign Ops</h5>
+            <p>Milestones, deliverables, content calendars, kanban tracking, creator SLAs, and automated reminders with audit logs.</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="mini"><i class="fa-solid fa-file-signature"></i></div>
+          <div>
+            <h5>Digital Contracts</h5>
+            <p>Clause libraries for licensing, exclusivity, reshoots, and ASCI compliance; e-sign + versioned amendments.</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="mini"><i class="fa-solid fa-bell"></i></div>
+          <div>
+            <h5>Smart Alerts</h5>
+            <p>New applicants, content submitted, performance milestones, budget pacing, anomalies, and payment releases.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section id="success" style="background: rgba(17,24,39,0.35);">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-badge">SUCCESS</div>
+      <h2 class="sec-title">Real brands. Real outcomes.</h2>
+      <p class="sec-desc">Case studies from fashion, wellness, edtech, fintech, and D2C categories across India.</p>
+    </div>
+
+    <div class="success">
+      <div class="s-card reveal">
+        <div class="s-logo"><i class="fa-solid fa-bag-shopping"></i></div>
+        <h3>E‑commerce Fashion</h3>
+        <p>50 micro-influencers in Tier‑2/3 cities drove consistent UGC and creator-led live sessions within 60 days.</p>
+        <div class="metrics">
+          <div class="metric"><div class="val">450%</div><div class="cap">ROI Lift</div></div>
+          <div class="metric"><div class="val">2.8M</div><div class="cap">Reach</div></div>
+          <div class="metric"><div class="val">12.5%</div><div class="cap">CVR</div></div>
+          <div class="metric"><div class="val">60d</div><div class="cap">Duration</div></div>
+        </div>
+      </div>
+
+      <div class="s-card reveal">
+        <div class="s-logo"><i class="fa-solid fa-heart-pulse"></i></div>
+        <h3>Wellness Startup</h3>
+        <p>Fitness creators + nutritionists produced evergreen shorts and reels with high save/share ratios.</p>
+        <div class="metrics">
+          <div class="metric"><div class="val">8.2%</div><div class="cap">Engagement</div></div>
+          <div class="metric"><div class="val">₹45L</div><div class="cap">Revenue</div></div>
+          <div class="metric"><div class="val">150K</div><div class="cap">New Users</div></div>
+          <div class="metric"><div class="val">35</div><div class="cap">Creators</div></div>
+        </div>
+      </div>
+
+      <div class="s-card reveal">
+        <div class="s-logo"><i class="fa-solid fa-graduation-cap"></i></div>
+        <h3>EdTech Platform</h3>
+        <p>Student ambassadors and faculty creators pushed exam-prep funnels with scholarship codes and tracking links.</p>
+        <div class="metrics">
+          <div class="metric"><div class="val">300%</div><div class="cap">Enrollments</div></div>
+          <div class="metric"><div class="val">5.6M</div><div class="cap">Views</div></div>
+          <div class="metric"><div class="val">₹2.8Cr</div><div class="cap">Impact</div></div>
+          <div class="metric"><div class="val">92%</div><div class="cap">Satisfaction</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-badge">PRICING</div>
+      <h2 class="sec-title">Simple, transparent plans</h2>
+      <p class="sec-desc">Start free. Upgrade when you need more power and scale.</p>
+    </div>
+
+    <div class="pricing">
+      <div class="price-card reveal">
+        <h3>Starter</h3>
+        <div class="price">₹0<span>/month</span></div>
+        <p class="p-desc">For small teams testing influencer marketing.</p>
+        <ul class="p-list">
+          <li><i class="fa-solid fa-check"></i> 10 influencer connections</li>
+          <li><i class="fa-solid fa-check"></i> Basic analytics</li>
+          <li><i class="fa-solid fa-check"></i> 1 active campaign</li>
+          <li><i class="fa-solid fa-check"></i> Email support (48h)</li>
+          <li><i class="fa-solid fa-check"></i> Contract templates</li>
+          <li><i class="fa-solid fa-check"></i> Community access</li>
+        </ul>
+        <button class="btn btn-ghost" onclick="scrollToId('cta')">Get Started Free</button>
+      </div>
+
+      <div class="price-card featured reveal">
+        <div class="tag">MOST POPULAR</div>
+        <h3>Professional</h3>
+        <div class="price">₹9,999<span>/month</span></div>
+        <p class="p-desc">For growing brands managing multi-creator campaigns.</p>
+        <ul class="p-list">
+          <li><i class="fa-solid fa-check"></i> Unlimited connections</li>
+          <li><i class="fa-solid fa-check"></i> Advanced analytics & reporting</li>
+          <li><i class="fa-solid fa-check"></i> 10 simultaneous campaigns</li>
+          <li><i class="fa-solid fa-check"></i> Priority support (12h)</li>
+          <li><i class="fa-solid fa-check"></i> AI recommendations</li>
+          <li><i class="fa-solid fa-check"></i> Audience insights</li>
+          <li><i class="fa-solid fa-check"></i> Approval workflows</li>
+          <li><i class="fa-solid fa-check"></i> Performance predictions</li>
+          <li><i class="fa-solid fa-check"></i> White-label reports</li>
+        </ul>
+        <button class="btn btn-primary" onclick="scrollToId('cta')">Start 14‑Day Trial</button>
+      </div>
+
+      <div class="price-card reveal">
+        <h3>Enterprise</h3>
+        <div class="price">Custom</div>
+        <p class="p-desc">For complex orgs with custom security and integrations.</p>
+        <ul class="p-list">
+          <li><i class="fa-solid fa-check"></i> Everything in Pro</li>
+          <li><i class="fa-solid fa-check"></i> Unlimited campaigns</li>
+          <li><i class="fa-solid fa-check"></i> Dedicated CSM</li>
+          <li><i class="fa-solid fa-check"></i> 24/7 priority support (2h)</li>
+          <li><i class="fa-solid fa-check"></i> Custom integrations (API)</li>
+          <li><i class="fa-solid fa-check"></i> Team & roles management</li>
+          <li><i class="fa-solid fa-check"></i> Advanced fraud detection</li>
+          <li><i class="fa-solid fa-check"></i> Legal & compliance review</li>
+          <li><i class="fa-solid fa-check"></i> Quarterly strategy sessions</li>
+        </ul>
+        <button class="btn btn-ghost" onclick="alert('Sales will reach out within 24 hours')">Contact Sales</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section id="testimonials" style="background: rgba(17,24,39,0.35);">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-badge">TESTIMONIALS</div>
+      <h2 class="sec-title">Loved by brands & creators</h2>
+      <p class="sec-desc">What customers say after shipping measurable campaigns with BrandLink.</p>
+    </div>
+
+    <div class="t-grid">
+      <div class="t-card reveal">
+        <div class="t-head">
+          <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Priya Sharma">
+          <div class="t-info">
+            <h4>Priya Sharma</h4>
+            <p>Marketing Director, BeautyGlow</p>
+          </div>
+        </div>
+        <div class="t-stars">⭐⭐⭐⭐⭐</div>
+        <div class="t-body">"The AI matching saved us weeks and our first campaign returned 350% ROI. The dashboards are the most actionable we’ve used."</div>
+      </div>
+
+      <div class="t-card reveal">
+        <div class="t-head">
+          <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Rahul Verma">
+          <div class="t-info">
+            <h4>Rahul Verma</h4>
+            <p>Founder, FitLife India</p>
+          </div>
+        </div>
+        <div class="t-stars">⭐⭐⭐⭐⭐</div>
+        <div class="t-body">"On a startup budget, micro-creators delivered outsized engagement. We grew 200% in three months with BrandLink."</div>
+      </div>
+
+      <div class="t-card reveal">
+        <div class="t-head">
+          <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Anjali Reddy">
+          <div class="t-info">
+            <h4>Anjali Reddy</h4>
+            <p>Creator (250K followers)</p>
+          </div>
+        </div>
+        <div class="t-stars">⭐⭐⭐⭐⭐</div>
+        <div class="t-body">"Transparent contracts, on-time payments, and fair briefs. Doubled my partnerships with peace of mind."</div>
+      </div>
+
+      <div class="t-card reveal">
+        <div class="t-head">
+          <img src="https://randomuser.me/api/portraits/men/85.jpg" alt="Arjun Malhotra">
+          <div class="t-info">
+            <h4>Arjun Malhotra</h4>
+            <p>Travel Creator (500K)</p>
+          </div>
+        </div>
+        <div class="t-stars">⭐⭐⭐⭐⭐</div>
+        <div class="t-body">"No more email chaos. Approvals and payments in one place with escrow protection—it’s creator-first."</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-badge">FAQ</div>
+      <h2 class="sec-title">Answers, fast</h2>
+      <p class="sec-desc">Everything you need to know to get started confidently.</p>
+    </div>
+
+    <div class="faq">
+      <div class="qa">
+        <div class="q"><span>How long to launch a campaign?</span><div class="chev"><i class="fa-solid fa-chevron-down"></i></div></div>
+        <div class="a">Most campaigns launch in 3–7 days. Day 1–2: brief + setup. Day 2–4: AI matches + creator applications. Day 4–6: shortlist, negotiate, contract. Day 7+: content production. Express 24–48h available.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span>How are influencers verified?</span><div class="chev"><i class="fa-solid fa-chevron-down"></i></div></div>
+        <div class="a">API checks for follower/ER validation, anomaly detection for bots, manual review for high-value deals, historical performance tracking, and audience geo-language consistency tests.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span>Is BrandLink good for startups?</span><div class="chev"><i class="fa-solid fa-chevron-down"></i></div></div>
+        <div class="a">Yes—our free Starter plan supports 10 connections and 1 campaign. Micro-creators (10–50K) often drive the best cost-per-action for early-stage brands.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span>Are payments secure?</span><div class="chev"><i class="fa-solid fa-chevron-down"></i></div></div>
+        <div class="a">Escrow with PCI-DSS gateways. Funds release on deliverable approval. UPI, cards, net banking, and intl support. All data encrypted at rest and in transit.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span>Do you support multiple platforms?</span><div class="chev"><i class="fa-solid fa-chevron-down"></i></div></div>
+        <div class="a">Instagram, YouTube, X, LinkedIn, Snapchat, and more. Compare channel performance and consolidate reporting in one dashboard.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span>How does the AI matching work?</span><div class="chev"><i class="fa-solid fa-chevron-down"></i></div></div>
+        <div class="a">We model creator-audience fit using 50+ signals: demographics, interests, ER normalized by niche, content style vectors, brand affinity, authenticity, language, geo, and post-funnel conversions.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span>What if content isn’t approved?</span><div class="chev"><i class="fa-solid fa-chevron-down"></i></div></div>
+        <div class="a">Built-in approvals with 2–3 revision rounds. Mediation support for disputes. Escrow protects both parties until final approval.</div>
+      </div>
+      <div class="qa">
+        <div class="q"><span>Do you offer APIs and integrations?</span><div class="chev"><i class="fa-solid fa-chevron-down"></i></div></div>
+        <div class="a">Yes—webhooks and REST APIs for CRM, Slack, GA4/Looker, UTM link generators, and BI exports. Enterprise SSO and SCIM on request.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="cta" class="band">
+  <h2>Launch your next creator campaign today</h2>
+  <p>Start free, invite your team, and get AI recommendations tailored to your niche and goals.</p>
+  <div class="actions">
+    <button class="btn btn-primary" onclick="alert('Trial started! Dummy action for demo.')">Start Free Trial</button>
+    <button class="btn btn-ghost" onclick="scrollToId('pricing')">Compare Plans</button>
+  </div>
+</section>
+
+<footer>
+  <div class="f-wrap">
+    <div class="f-about">
+      <h3>BrandLink</h3>
+      <p>AI-powered influencer marketing for Indian brands and creators. Discover, collaborate, and measure real business impact—at scale.</p>
+      <div class="social">
+        <a class="soc" href="#"><i class="fa-brands fa-x-twitter"></i></a>
+        <a class="soc" href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+        <a class="soc" href="#"><i class="fa-brands fa-instagram"></i></a>
+        <a class="soc" href="#"><i class="fa-brands fa-youtube"></i></a>
+      </div>
+    </div>
+
+    <div class="f-col">
+      <h4>Product</h4>
+      <ul>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how">Process</a></li>
+        <li><a href="#platform">Platform</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+      </ul>
+    </div>
+    <div class="f-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Partners</a></li>
+        <li><a href="#">Press</a></li>
+      </ul>
+    </div>
+    <div class="f-col">
+      <h4>Resources</h4>
+      <ul>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Playbooks</a></li>
+        <li><a href="#">Guides</a></li>
+        <li><a href="#">API Docs</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="f-bottom">
+    <div>© <span id="year"></span> BrandLink Technologies Pvt. Ltd. All rights reserved.</div>
+    <div>
+      <a href="#">Terms</a> • <a href="#">Privacy</a> • <a href="#">Security</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Sticky nav
+const nav = document.getElementById('nav');
+const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 10);
+document.addEventListener('scroll', onScroll);
+onScroll();
+
+// Mobile menu
+const burger = document.getElementById('burger');
+const menu = document.getElementById('menu');
+burger.addEventListener('click', () => menu.classList.toggle('open'));
+menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => menu.classList.remove('open')));
+
+// Smooth scroll helper
+function scrollToId(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  window.scrollTo({ top: el.offsetTop - 70, behavior: 'smooth' });
+}
+
+// Intersection reveal
+const reveal = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
+}, { threshold: 0.15 });
+reveal.forEach(el => io.observe(el));
+
+// FAQ toggles
+document.querySelectorAll('.qa').forEach(box => {
+  box.addEventListener('click', () => box.classList.toggle('open'));
+});
+
+// Animated stats counter
+function animateCounters() {
+  document.querySelectorAll('.num[data-count]').forEach(el => {
+    const target = parseInt(el.dataset.count, 10);
+    const isLarge = target > 10000;
+    const dur = 1400;
+    const start = performance.now();
+    function step(t) {
+      const p = Math.min(1, (t - start) / dur);
+      const val = Math.floor(target * (0.1 + 0.9 * p*p));
+      el.textContent = isLarge ? val.toLocaleString('en-IN') : val.toString();
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  });
+}
+let countersRun = false;
+const statsObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting && !countersRun) {
+      countersRun = true; animateCounters(); statsObs.disconnect();
+    }
+  });
+}, { threshold: 0.25 });
+document.querySelectorAll('.stats').forEach(s => statsObs.observe(s));
+
+// Active link highlight
+const sections = [...document.querySelectorAll('section, header.hero')];
+const links = [...document.querySelectorAll('.nav-menu a')];
+const spy = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const id = e.target.id || 'home';
+      links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + id));
+    }
+  });
+}, { threshold: 0.4 });
+sections.forEach(s => spy.observe(s));
+
+// Year
+document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
